@@ -1,0 +1,8 @@
+RewriteEngine On
+RewriteRule ^(.*)$ index.php?caminho=$1 [QSA,L]
+
+<Files .env>
+    Order allow,deny
+    Deny from all
+</Files>
+Options -Indexes
