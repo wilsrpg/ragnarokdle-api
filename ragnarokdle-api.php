@@ -4,14 +4,15 @@ include_once 'nomes_estilizados_de_todas_as_armas.php';
 
 function obter_dados($nome_estilizado) {
   global $nomes_estilizados_de_todos_os_monstros;
+  //echo 'aki '.$nome_estilizado;exit;
   //$nomes_minusculos = array_map(function($n) {return strtolower($n['nome']);}, $nomes_estilizados_de_todos_os_monstros);
   $indice = array_search(strtolower($nome_estilizado), array_map(function($n) {return strtolower($n['nome']);}, $nomes_estilizados_de_todos_os_monstros));
-  if ($indice === false)
+  //echo $indice;exit;
+  if (empty($indice)) //array_search tá retornando 0 quando não encontra, por isso tou improvisando aqui
     return ['erro' => 'Palpite não encontrado: '.$nome_estilizado];
 
   $id = $nomes_estilizados_de_todos_os_monstros[$indice]['id'];
   //echo 'aki '.$nome_estilizado;exit;
-  //echo $indice;exit;
   //echo $id;exit;
 
   $ch = curl_init();
@@ -32,6 +33,7 @@ function obter_dados($nome_estilizado) {
   $dados = curl_exec($ch);
   $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
   curl_close($ch);
+  //var_dump($dados);exit;
 
   if ($http_code != 200) {
     return json_encode(['erro' => 'Erro na comunicação com o servidor: '.curl_error($ch)]);
@@ -52,12 +54,13 @@ function obter_dados($nome_estilizado) {
   $dados = curl_exec($ch);
   $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
   curl_close($ch);
+  //var_dump($dados);exit;
+
   if ($http_code != 200) {
     return json_encode(['erro' => 'Erro na comunicação com o servidor: '.curl_error($ch)]);
   }
   if (empty($dados))
     return ['erro' => 'Palpite não encontrado: '.$nome_estilizado];
-  //var_dump($dados);exit;
   $nivel = json_decode($dados)->main_stats->level*1;
 
   $racas = [
@@ -141,25 +144,30 @@ function obter_dados($nome_estilizado) {
       $maior_drop['chance'] = $drop->chance;
     }
   }
-
-  $CATEGORIA = '/Item/';
-  $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL, $URL_BASE.$CATEGORIA.$maior_drop['id'].$API_KEY.$IDIOMA);
-  curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-  curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
-
-  $dados = curl_exec($ch);
-  $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-  curl_close($ch);
-  if ($http_code != 200) {
-    return json_encode(['erro' => 'Erro na comunicação com o servidor: '.curl_error($ch)]);
-  }
-  if (empty($dados))
-    return ['erro' => 'Palpite não encontrado: '.$nome_estilizado];
-  //var_dump($dados);exit;
-  $maior_drop['nome'] = json_decode($dados)->name;
+  //var_dump($drops);exit;
   //var_dump($maior_drop);exit;
+
+  if ($maior_drop['chance'] > 0){
+    $CATEGORIA = '/Item/';
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $URL_BASE.$CATEGORIA.$maior_drop['id'].$API_KEY.$IDIOMA);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
+
+    $dados = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    //var_dump($dados);exit;
+
+    if ($http_code != 200) {
+      return json_encode(['erro' => 'Erro na comunicação com o servidor: '.curl_error($ch)]);
+    }
+    if (empty($dados))
+      return ['erro' => 'Palpite não encontrado: '.$nome_estilizado];
+    $maior_drop['nome'] = json_decode($dados)->name;
+    //var_dump($maior_drop);exit;
+  }
 
   $mvp = $secreto->stats->mvp == 1;
   $miniboss = $secreto->stats->class == 1 && $secreto->stats->mvp == 0;
@@ -189,7 +197,7 @@ function obter_dados_da_arma($nome_estilizado) {
   //echo $nome_estilizado;exit;
   $indice = array_search(strtolower($nome_estilizado), array_map(function($n) {return strtolower($n['nome']);}, $nomes_estilizados_de_todas_as_armas));
   //echo $indice;exit;
-  if ($indice === false)
+  if (empty($indice)) //array_search tá retornando 0 quando não encontra, por isso tou improvisando aqui
     return ['erro' => 'Palpite não encontrado: '.$nome_estilizado];
   $id = $nomes_estilizados_de_todas_as_armas[$indice]['id'];
   //echo $id;exit;
@@ -414,7 +422,9 @@ if ($api == 'ragnarokdle-api') {
         $secreto = obter_dados($array[$indice_do_secreto]['nome']);
       if ($modo == 'arma')
         $secreto = obter_dados_da_arma($array[$indice_do_secreto]['nome']);
-      
+      //var_dump($secreto);exit;
+      //echo json_encode($secreto);exit;
+
       $dicas = [];
       if ($modo == 'monstro')
         $dicas = [$secreto->mapas, $secreto->maior_drop, $secreto->mvp, $secreto->miniboss, $secreto->escravos];
@@ -491,19 +501,27 @@ if ($api == 'ragnarokdle-api') {
       }
       
       $modo = $_SESSION['modo'];
-      $array = [];
-      if ($modo == 'monstro')
-        $array = $nomes_estilizados_de_todos_os_monstros;
-      if ($modo == 'arma')
-        $array = $nomes_estilizados_de_todas_as_armas;
+      //$array = [];
+      //if ($modo == 'monstro')
+      //  $array = $nomes_estilizados_de_todos_os_monstros;
+      //if ($modo == 'arma')
+      //  $array = $nomes_estilizados_de_todas_as_armas;
 
-      $indice = array_search(strtolower($post_params['palpite']), array_map(function($n) {return strtolower($n['nome']);}, $array));
+      //$indice = array_search(strtolower($post_params['palpite']), array_map(function($n) {return strtolower($n['nome']);}, $array));
       $palpite;
-      if ($modo == 'monstro')
-        $palpite = obter_dados($array[$indice]['nome']);
-      if ($modo == 'arma')
-        $palpite = obter_dados_da_arma($array[$indice]['nome']);
+      //if ($modo == 'monstro')
+      //  $palpite = obter_dados($array[$indice]['nome']);
+      //if ($modo == 'arma')
+      //  $palpite = obter_dados_da_arma($array[$indice]['nome']);
       //echo json_encode(['erro'=>$palpite->nome]);exit;
+
+      if ($modo == 'monstro')
+        $palpite = obter_dados($post_params['palpite']);
+        //$array = $nomes_estilizados_de_todos_os_monstros;
+      if ($modo == 'arma')
+        $palpite = obter_dados_da_arma($post_params['palpite']);
+        //$array = $nomes_estilizados_de_todas_as_armas;
+      //var_dump($palpite);exit;
 
       if (empty($palpite->id)) {
         http_response_code(400);
