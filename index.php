@@ -50,7 +50,4 @@ if (empty($api) || empty($versao) || empty($acao)) {
   exit;
 }
 
-if ($api == 'ragnarokdle-monstros-api')
-  include_once 'ragnarokdle-monstros-api.php';
-if ($api == 'ragnarokdle-itens-api')
-  include_once 'ragnarokdle-itens-api.php';
+include_once 'ragnarokdle-api.php';
