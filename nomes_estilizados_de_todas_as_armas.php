@@ -1,5 +1,6 @@
 <?php
 $nomes_estilizados_de_todas_as_armas = [
+  ['id'=>0,'nome'=>'array_search tá retornando 0 quando não encontra, por isso tou improvisando aqui'],
   ["id" => 1101, "nome" => "Espada [3]"],
   ["id" => 1102, "nome" => "Espada [4]"],
   ["id" => 1104, "nome" => "Alfanje [3]"],
