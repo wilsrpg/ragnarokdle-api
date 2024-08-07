@@ -7,8 +7,9 @@ function obter_dados($nome_estilizado) {
   //echo 'aki '.$nome_estilizado;exit;
   //$nomes_minusculos = array_map(function($n) {return strtolower($n['nome']);}, $nomes_estilizados_de_todos_os_monstros);
   $indice = array_search(strtolower($nome_estilizado), array_map(function($n) {return strtolower($n['nome']);}, $nomes_estilizados_de_todos_os_monstros));
-  //echo $indice;exit;
-  if (empty($indice)) //array_search tá retornando 0 quando não encontra, por isso tou improvisando aqui
+  //var_dump($indice);exit;
+  if ($indice === false)
+  //if (empty($indice)) //array_search tá retornando 0 quando não encontra, por isso tou improvisando aqui
     return ['erro' => 'Palpite não encontrado: '.$nome_estilizado];
 
   $id = $nomes_estilizados_de_todos_os_monstros[$indice]['id'];
@@ -194,10 +195,10 @@ function obter_dados($nome_estilizado) {
 function obter_dados_da_arma($nome_estilizado) {
   global $nomes_estilizados_de_todas_as_armas;
   //$nomes_minusculos = array_map(function($n) {return strtolower($n['nome']);}, $nomes_estilizados_de_todas_as_armas);
-  //echo $nome_estilizado;exit;
+  //var_dump($nome_estilizado);exit;
   $indice = array_search(strtolower($nome_estilizado), array_map(function($n) {return strtolower($n['nome']);}, $nomes_estilizados_de_todas_as_armas));
-  //echo $indice;exit;
-  if (empty($indice)) //array_search tá retornando 0 quando não encontra, por isso tou improvisando aqui
+  //var_dump($indice);exit;
+  if ($indice === false)
     return ['erro' => 'Palpite não encontrado: '.$nome_estilizado];
   $id = $nomes_estilizados_de_todas_as_armas[$indice]['id'];
   //echo $id;exit;

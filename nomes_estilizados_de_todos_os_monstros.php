@@ -1,6 +1,5 @@
 <?php
 $nomes_estilizados_de_todos_os_monstros = [
-  ['id'=>0,'nome'=>'array_search tá retornando 0 quando não encontra, por isso tou improvisando aqui'],
   ["id" => 1001, "nome" => "Escorpião"],
   ["id" => 1002, "nome" => "Poring"],
   ["id" => 1004, "nome" => "Zangão"],
