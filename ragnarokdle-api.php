@@ -348,6 +348,7 @@ function obter_dados_da_arma($nome_estilizado) {
     "Martelo",
     "Metralhadora",
     "Pistola",
+    "Porrete",
     "Punhal",
     "Punho",
     "Rifle",
