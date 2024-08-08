@@ -408,7 +408,23 @@ if ($api == 'ragnarokdle-api') {
       }
 
       $seed = (int) date("Ymd");
-      //srand($seed);
+      if (isset($post_params['data'])) {
+        $data = (int) $post_params['data'];
+        $ano = floor($data/10000);
+        $mes = floor(($data-$ano*10000)/100);
+        $dia = $data-$ano*10000-$mes*100;
+        //http_response_code(400);
+        //echo json_encode(['erro' => $ano.'-'.$mes.'-'.$dia]);
+        //exit;
+        if (!checkdate($mes, $dia, $ano)) {
+          http_response_code(400);
+          echo json_encode(['erro' => 'Data inválida: "'.$post_params['data'].'".']);
+          exit;
+        }
+        $seed = $data;
+      }
+      //var_dump($seed);exit;
+      srand($seed);
       $array = [];
       if ($modo == 'monstro')
         $array = $nomes_estilizados_de_todos_os_monstros;
@@ -529,13 +545,13 @@ if ($api == 'ragnarokdle-api') {
 
       if (empty($palpite->id)) {
         http_response_code(400);
-        echo json_encode(['erro' => 'Palpite não encontrado.']);
+        echo json_encode(['erro' => 'Palpite não encontrado: '.$post_params['palpite']]);
         exit;
       }
       foreach ($_SESSION['palpites'] as $p)
         if ($palpite->nome == $p['nome']) {
           http_response_code(409);
-          echo json_encode(['erro' => 'Palpite repetido.']);
+          echo json_encode(['erro' => 'Palpite repetido: '.$post_params['palpite']]);
           exit;
         }
 
