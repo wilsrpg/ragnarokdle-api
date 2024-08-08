@@ -1,6 +1,8 @@
 <?php
 include_once 'nomes_estilizados_de_todos_os_monstros.php';
 include_once 'nomes_estilizados_de_todas_as_armas.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
 function obter_dados($nome_estilizado) {
   global $nomes_estilizados_de_todos_os_monstros;
@@ -19,7 +21,7 @@ function obter_dados($nome_estilizado) {
   $ch = curl_init();
   $URL_BASE = 'https://www.divine-pride.net/api/database/';
   $CATEGORIA = '/Monster/';
-  $API_KEY = '?apiKey=7e9552d32c9990d74dd961c53f1a6eed';
+  $API_KEY = '?apiKey='.$_ENV['API_KEY'];
   $IDIOMA = '&server=bRO';
 
   curl_setopt($ch, CURLOPT_URL, $URL_BASE.$CATEGORIA.$id.$API_KEY.$IDIOMA);
