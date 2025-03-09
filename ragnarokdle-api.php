@@ -336,6 +336,8 @@ function obter_dados_da_arma($nome_estilizado) {
     "Garra",
     "Guitarra",
     "Huuma",
+    "Instrumento",
+    "Musical",
     "Kataná",
     "Katar",
     "Lâmina",
